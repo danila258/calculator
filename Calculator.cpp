@@ -84,6 +84,10 @@ void Calculator::slotButtonClicked() {
         _exampleLineEdit->setText(_userInput);
     }
     else {
+        if (_userInput == "error") {
+            _userInput.clear();
+        }
+
         _userInput += str;
         _exampleLineEdit->setText(_userInput);
     }
