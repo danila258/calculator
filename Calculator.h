@@ -1,8 +1,8 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
-#include <QtWidgets>
 #include "RPN.h"
+#include <QtWidgets>
 
 
 class Calculator : public QWidget {

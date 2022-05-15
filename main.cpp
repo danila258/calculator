@@ -1,5 +1,5 @@
-#include <QApplication>
 #include "Calculator.h"
+#include <QApplication>
 
 int main(int argc, char *argv[]) {
     bool enableHighDpiScaling = false;

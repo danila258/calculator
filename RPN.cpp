@@ -38,6 +38,10 @@ std::string convertToRPN(const std::string& userInput) {
             continue;
         }
 
+        if (type == '-') {
+            line += "0 ";
+        }
+
         if (operationsStack.empty() || type == '(') {
             if (type == ')') {
                 return "error";
