@@ -5,7 +5,7 @@ Calculator::Calculator (QWidget* parent) : QWidget(parent) {
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 
     resize(500, 300);
-    //setFixedHeight(290);
+    setFixedHeight(290);
 
     _exampleLineEdit = new QLineEdit();
     _exampleLineEdit->setMinimumSize(150, 40);
