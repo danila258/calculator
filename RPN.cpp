@@ -18,29 +18,30 @@ std::string convertToRPN(const std::string& userInput) {
     int pos = 0;
     char type;
     char typeTwo;
+    bool valueFlag;
 
     while ( pos < userInput.size() ) {
         type = getElement(pos, userInput);
 
         if (type == NUMBER) {
             num = getNextNum(pos, userInput);
-
-            for (char i : num) {
-                line.push_back(i);
-            }
-
-            line.push_back(' ');
+            line += num + ' ';
+            valueFlag = true;
             continue;
         }
 
         if (type == PI) {
             line += "3,14 ";
+            valueFlag = true;
             continue;
         }
 
-        if (type == '-') {
+        if (!operationsStack.empty() && operationsStack.top() != ')' && !valueFlag && type == '-' &&
+            (line[line.size() - 2] != '-' || operationsStack.top() == '(')) {
             line += "0 ";
         }
+
+        valueFlag = false;
 
         if (operationsStack.empty() || type == '(') {
             if (type == ')') {
@@ -64,6 +65,7 @@ std::string convertToRPN(const std::string& userInput) {
             }
 
             operationsStack.pop();
+            valueFlag = true;
             continue;
         }
 
