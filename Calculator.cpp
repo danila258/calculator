@@ -60,7 +60,7 @@ QString Calculator::calculate() {
             if (answer[i + 1] == '0' && answer[i + 2] == '0') {
                 answer.erase(i, answer.size() - 1);
             }
-            else if (answer[i + 2] == '0'){
+            else if (answer[i + 2] == '0') {
                 answer.erase(i + 2, answer.size() - 1);
             }
             else {
