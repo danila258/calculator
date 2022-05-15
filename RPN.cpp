@@ -37,7 +37,7 @@ std::string convertToRPN(const std::string& userInput) {
         }
 
         if (!operationsStack.empty() && operationsStack.top() != ')' && !valueFlag && type == '-' &&
-            (line[line.size() - 2] != '-' || operationsStack.top() == '(')) {
+            (line[line.size() - 2] != '-' || operationsStack.top() == '(') || (type == '-' && line.empty())) {
             line += "0 ";
         }
 
