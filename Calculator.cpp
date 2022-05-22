@@ -1,13 +1,12 @@
 #include "Calculator.h"
 
-Calculator::Calculator (QWidget* parent) : QWidget(parent) {
+Calculator::Calculator (QWidget* parent) : QWidget(parent), _exampleLineEdit(new QLineEdit), _errorFlag(false) {
     setWindowTitle("Calculator");
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 
     resize(500, 300);
     setFixedHeight(290);
 
-    _exampleLineEdit = new QLineEdit();
     _exampleLineEdit->setMinimumSize(150, 40);
     _exampleLineEdit->setStyleSheet("font-size: 30px");
 
@@ -47,13 +46,25 @@ QPushButton* Calculator::createButton(const QString& str) {
 }
 
 QString Calculator::calculate() {
-    std::string rpnLine = convertToRPN(_userInput.toStdString());
+    std::string rpnLine;
+    std::string answer;
 
-    if (rpnLine == "error") {
-        return QString::fromStdString(rpnLine);
+    try {
+        rpnLine = convertToRPN(_userInput.toStdString());
+    }
+    catch (const std::exception& exception) {
+        _errorFlag = true;
+        return exception.what();
     }
 
-    std::string answer = calculateExample(rpnLine);
+    try {
+        answer = calculateExample(rpnLine);
+    }
+    catch (const std::exception& exception) {
+        _errorFlag = true;
+        return exception.what();
+    }
+
 
     for (int i = 0; i < answer.size(); ++i) {
         if (answer[i] == ',') {
@@ -84,7 +95,8 @@ void Calculator::slotButtonClicked() {
         _exampleLineEdit->setText(_userInput);
     }
     else {
-        if (_userInput == "error") {
+        if (_errorFlag) {
+            _errorFlag = false;
             _userInput.clear();
         }
 

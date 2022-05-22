@@ -45,7 +45,7 @@ std::string convertToRPN(const std::string& userInput) {
 
         if (operationsStack.empty() || type == '(') {
             if (type == ')') {
-                return "error";
+                throw std::runtime_error("no pared (");
             }
 
             operationsStack.push(type);
@@ -60,7 +60,7 @@ std::string convertToRPN(const std::string& userInput) {
                     operationsStack.pop();
                 }
                 else {
-                    return "error";
+                    throw std::runtime_error("no pared (");
                 }
             }
 
@@ -76,40 +76,39 @@ std::string convertToRPN(const std::string& userInput) {
             continue;
         }
 
-        try {
-            while (true) {
-                if (operationPower(type) <= operationPower(typeTwo)) {
-                    line.push_back(typeTwo);
-                    line.push_back(' ');
-                    operationsStack.pop();
+        if (typeTwo == '^' && type == '^') {
+            operationsStack.push(type);
+            continue;
+        }
 
-                    if ( operationsStack.empty() ) {
-                        operationsStack.push(type);
-                        break;
-                    }
+        while (true) {
+            if (operationPower(type) <= operationPower(typeTwo)) {
+                line.push_back(typeTwo);
+                line.push_back(' ');
+                operationsStack.pop();
 
-                    typeTwo = operationsStack.top();
-
-                    if (typeTwo == '(') {
-                        operationsStack.push(type);
-                        break;
-                    }
+                if ( operationsStack.empty() ) {
+                    operationsStack.push(type);
+                    break;
                 }
-                else {
+
+                typeTwo = operationsStack.top();
+
+                if (typeTwo == '(') {
                     operationsStack.push(type);
                     break;
                 }
             }
-        }
-
-        catch (const char* line) {
-            return line;
+            else {
+                operationsStack.push(type);
+                break;
+            }
         }
     }
 
     while ( !operationsStack.empty() ) {
         if (operationsStack.top() == '(') {
-            return "error";
+            throw std::runtime_error("no pared )");
         }
 
         line.push_back(operationsStack.top());
@@ -148,7 +147,7 @@ int operationPower(char operation) {
         return THIRD;
     }
 
-    throw "error";
+    throw std::runtime_error("unknown operator");
 }
 
 std::string calculateExample(const std::string& rpnLine) {
@@ -160,66 +159,60 @@ std::string calculateExample(const std::string& rpnLine) {
     while ( pos < rpnLine.size() ) {
         type = getElement(pos, rpnLine);
 
-        try {
-            switch (type) {
-                case NUMBER:
-                    valuesStack.push(std::stod(getNextNum(pos, rpnLine)));
-                    break;
+        switch (type) {
+            case NUMBER:
+                valuesStack.push(std::stod(getNextNum(pos, rpnLine)));
+                break;
 
-                case SIN:
-                    valuesStack.push(std::sin( stackPop(valuesStack) ));
-                    break;
+            case SIN:
+                valuesStack.push(std::sin( stackPop(valuesStack) ));
+                break;
 
-                case COS:
-                    valuesStack.push(std::cos( stackPop(valuesStack) ));
-                    break;
+            case COS:
+                valuesStack.push(std::cos( stackPop(valuesStack) ));
+                break;
 
-                case TAN:
-                    valuesStack.push(std::tan( stackPop(valuesStack) ));
-                    break;
+            case TAN:
+                valuesStack.push(std::tan( stackPop(valuesStack) ));
+                break;
 
-                case COT:
-                    valuesStack.push(1 / std::tan( stackPop(valuesStack) ));
-                    break;
+            case COT:
+                valuesStack.push(1 / std::tan( stackPop(valuesStack) ));
+                break;
 
-                case '+':
-                    valuesStack.push(stackPop(valuesStack) + stackPop(valuesStack));
-                    break;
+            case '+':
+                valuesStack.push(stackPop(valuesStack) + stackPop(valuesStack));
+                break;
 
-                case '*':
-                    valuesStack.push(stackPop(valuesStack) * stackPop(valuesStack));
-                    break;
+            case '*':
+                valuesStack.push(stackPop(valuesStack) * stackPop(valuesStack));
+                break;
 
-                case '-':
-                    operator2 = stackPop(valuesStack);
-                    valuesStack.push(stackPop(valuesStack) - operator2);
-                    break;
+            case '-':
+                operator2 = stackPop(valuesStack);
+                valuesStack.push(stackPop(valuesStack) - operator2);
+                break;
 
-                case '/':
-                    operator2 = stackPop(valuesStack);
-                    valuesStack.push(stackPop(valuesStack) / operator2);
-                    break;
+            case '/':
+                operator2 = stackPop(valuesStack);
+                valuesStack.push(stackPop(valuesStack) / operator2);
+                break;
 
-                case '^':
-                    operator2 = stackPop(valuesStack);
-                    valuesStack.push(std::pow(stackPop(valuesStack), operator2));
-                    break;
+            case '^':
+                operator2 = stackPop(valuesStack);
+                valuesStack.push(std::pow(stackPop(valuesStack), operator2));
+                break;
 
-                case EXIT:
-                    break;
+            case EXIT:
+                break;
 
-                default:
-                    return "error";
-            }
-        }
-
-        catch (const char* line) {
-            return line;
+            default:
+                throw std::runtime_error("unknown operator");
         }
     }
 
     if (valuesStack.size() != 1) {
-        return "error";
+        throw std::runtime_error("extra number");
     }
 
     std::string answer = std::to_string(stackPop(valuesStack));
@@ -295,7 +288,7 @@ void getNumberPart(int& pos, const std::string& line, char& curElem, std::string
 
 double stackPop(std::stack<double>& valuesStack) {
     if ( valuesStack.empty() ) {
-        throw "error";
+        throw std::runtime_error("missing numbers");
     }
 
     double buf = valuesStack.top();

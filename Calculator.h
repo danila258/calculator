@@ -2,6 +2,7 @@
 #define CALCULATOR_H
 
 #include "RPN.h"
+
 #include <QtWidgets>
 
 
@@ -15,6 +16,8 @@ public:
 private:
     QLineEdit* _exampleLineEdit;
     QString _userInput;
+
+    bool _errorFlag;
 
     QPushButton* createButton(const QString& str);
     QString calculate();
