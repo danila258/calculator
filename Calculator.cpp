@@ -16,7 +16,7 @@ Calculator::Calculator (QWidget* parent) : QWidget(parent), _exampleLineEdit(new
                                 {"sin", "7", "8", "9", "/"},
                                 {"cos", "4", "5", "6", "*"},
                                 {"tg", "1", "2", "3", "-"},
-                                {"ctg", "0", ",", "=", "+"} };
+                                {"ctg", "0", ".", "=", "+"} };
 
     QGridLayout* layout = new QGridLayout;
     layout->addWidget(_exampleLineEdit, 0, 0, 1, 5);
@@ -67,7 +67,7 @@ QString Calculator::calculate() {
 
 
     for (int i = 0; i < answer.size(); ++i) {
-        if (answer[i] == ',') {
+        if (answer[i] == '.') {
             if (answer[i + 1] == '0' && answer[i + 2] == '0') {
                 answer.erase(i, answer.size() - 1);
             }
@@ -80,6 +80,7 @@ QString Calculator::calculate() {
         }
     }
 
+    qDebug() << QString::fromStdString(rpnLine);
     return QString::fromStdString(answer);
 }
 
